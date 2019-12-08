@@ -65,4 +65,4 @@ class OAuth2CallBack(View):
                 'token_expiry': response_data["token_expiry"]
             })
 
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('fetch_events'))

@@ -3,12 +3,13 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.calendar.utils import get_new_access_token
+from utils import get_new_access_token
 
 UserOauthToken = apps.get_model('authenticate', 'UserOauthToken')
 Calendar = apps.get_model('calendar', 'Calendar')
@@ -27,13 +28,6 @@ class FetchEventAPIView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        """
-
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         user_oauth = UserOauthToken.objects.get(user=request.user)
         if user_oauth.is_token_expired():
             user_oauth.access_token = get_new_access_token(user_oauth.refresh_token)
@@ -69,7 +63,7 @@ class FetchEventAPIView(APIView):
 
         events = get_or_create_events(calendar, events)
 
-        return Response({"message": "{} Events fetched".format(len(events))})
+        return HttpResponseRedirect(reverse('index'))
 
 
 def get_or_create_events(calendar, events):
