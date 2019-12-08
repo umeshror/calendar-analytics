@@ -1,0 +1,19 @@
+*.log
+*.pot
+*.pyc
+__pycache__/
+media
+.idea/
+*.pyo
+*.db
+*.project
+*.pydevproject
+.DS_Store
+build
+uploads/*kr
+logs
+CACHE
+/ipython_log.py
+/setup.sh
+
+git remote add origin git@github.com-personal:umeshror/calendar-analytics.git

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<!--[if lt IE 7]>
+<html lang="en" ng-app="CalendarApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="CalendarApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="CalendarApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="CalendarApp" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CalendarApp</title>
+    <meta name="description" content="Finding hotel deals made easy">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href={% static "assets/libs/bootstrap-theme-custom.min.css" %}>
+    <link rel="stylesheet" href={% static 'assets/app.css' %}>
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+
+        <div class="brand-centered">
+            <a class="navbar-brand" href="/#/">CalendarApp
+            </a>
+            <small class="description">Calanedar APP</small>
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/admin" target="_blank"
+                       class="btn btn-primary" data-toggle="popover" data-trigger="hover" data-placement="bottom"
+                       data-content="User: admin  Pwd: admin123"
+                >Admin</a></li>
+                <li><a href="https://github.com/umeshror/calendar-analytics" target="_blank">Github</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section ng-view></section>
+
+<footer>
+</footer>
+<script src="{% static 'assets/libs/jquery.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/libs/angular.min.js' %}"></script>
+<script src="{% static 'assets/libs/angular-route.min.js' %}"></script>
+<script src="{% static 'assets/libs/angular-resource.min.js' %}"></script>
+
+
+<script src="{% static 'calendar/app.js' %}"></script>
+<script src="{% static 'calendar/landing_controller.js' %}"></script>
+<script src="{% static 'calendar/resources.js' %}"></script>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
+</body>
+</html>

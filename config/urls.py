@@ -1,0 +1,19 @@
+from django.conf import settings
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.views.decorators.csrf import csrf_exempt
+
+from apps.calendar.api import FetchEventAPIView
+from apps.authenticate.views import OAuth, OAuth2CallBack
+from apps.views import index
+
+urlpatterns = [
+    url(r'^$', index, name='index'),
+    url(r'^fetch-events/$', FetchEventAPIView.as_view(), name='fetch_events'),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^oauth-login/$', csrf_exempt(OAuth.as_view()), name='oauth'),
+    url(r'^oauth-callback/$', OAuth2CallBack.as_view(), name='oauth2_callback'),
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

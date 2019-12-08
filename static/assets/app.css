@@ -1,0 +1,108 @@
+.container-fluid {
+    max-width: 1200px;
+}
+
+.search-box-wrapper {
+    padding-bottom: 15px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/*====================navbar===================*/
+.brand-centered {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+
+.navbar-toggle {
+    z-index: 1;
+}
+
+.navbar-brand {
+    font-size: 32px;
+    padding-top: 5px;
+}
+
+.navbar-brand, .description {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.description {
+    color: white;
+    margin-top: 40px;
+    margin-left: -15px;
+}
+
+@media screen and  (max-width: 820px) {
+    .description {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 768px) {
+
+    .navbar {
+        border-radius: 0;
+    }
+}
+
+/*====================card======================*/
+
+.Calendar-card {
+    padding: 0;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+.Calendar-card > table {
+    margin-bottom: 0;
+}
+
+.Calendar-card:hover {
+    border: solid 1px #313567;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+@media screen and  (min-width: 820px) {
+    .Calendar-card-wrapper {
+        padding-top: 10px !important;
+    }
+
+    .row {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.row.vdivide [class*='col-']:not(:last-child):after {
+    background: #e0e0e0;
+    width: 1px;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    min-height: 70px;
+}
