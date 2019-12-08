@@ -8,13 +8,13 @@ from googleapiclient.discovery import build
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.calendar.utils import get_new_access_token
+
 UserOauthToken = apps.get_model('authenticate', 'UserOauthToken')
 Calendar = apps.get_model('calendar', 'Calendar')
 Event = apps.get_model('calendar', 'Event')
 Attendee = apps.get_model('calendar', 'Attendee')
 Account = apps.get_model('calendar', 'Account')
-
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 
 class FetchEventAPIView(APIView):
@@ -35,6 +35,9 @@ class FetchEventAPIView(APIView):
         :return:
         """
         user_oauth = UserOauthToken.objects.get(user=request.user)
+        if user_oauth.is_token_expired():
+            user_oauth.access_token = get_new_access_token(user_oauth.refresh_token)
+            user_oauth.save()
 
         credentials = Credentials(
             token=user_oauth.access_token,

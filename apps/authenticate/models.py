@@ -1,4 +1,6 @@
-from datetime import datetime
+import datetime
+
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -36,5 +38,7 @@ class UserOauthToken(models.Model):
     def is_token_expired(self):
         """
         Return's if current token is expired or not
+        By default we are substracting 5 minutes from token_expiry
+        to avoid any race condition
         """
-        return datetime.now() < self.token_expiry
+        return timezone.now() > (self.token_expiry - datetime.timedelta(minutes=5))
