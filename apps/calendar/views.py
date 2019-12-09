@@ -115,15 +115,15 @@ def get_or_create_events(calendar, events):
     return data
 
 
-def create_attendees(event, attendees_dict):
+def create_attendees(event, attendees_records):
     """
     Creates Attendee for a single Event
     :param event: <Event> Instance
     :param attendees_dict: [{'email': 'email', 'responseStatus': 'status'}]
     :return:
     """
-    accounts = []
-    for record in attendees_dict:
+    attendees = []
+    for record in attendees_records:
         email = record.get('email')
         try:
             user = User.objects.get(email=email)
@@ -134,8 +134,8 @@ def create_attendees(event, attendees_dict):
         attendee, _ = Attendee.objects.update_or_create(account=account,
                                                         event=event,
                                                         rsvp=record['responseStatus'])
-        accounts.append(account)
-    return accounts
+        attendees.append(attendee)
+    return attendees
 
 
 def get_utc_time(timezone_aware_ts, time_zone, is_date=False):
