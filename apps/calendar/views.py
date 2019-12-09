@@ -61,7 +61,7 @@ class FetchEventView(View):
 
         events = get_or_create_events(calendar, events)
 
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('analytics'))
 
 
 def get_or_create_events(calendar, events):

@@ -23,7 +23,7 @@ class OAuth(View):
     def get(self, request):
         try:
             UserOauthToken.objects.get(user=request.user)
-            return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect(reverse('fetch_events'))
         except UserOauthToken.DoesNotExist:
             flow = OAuth2WebServerFlow(settings.CALENDAR_CLIENT_ID,
                                        settings.CALENDAR_CLIENT_SECRET,

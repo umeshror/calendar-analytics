@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from datetime import datetime
 
 import pandas as pd
@@ -5,8 +7,49 @@ import pytz
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count
 from django.utils.functional import cached_property
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.calendar.models import Calendar, Attendee
+
+
+class AnalyticsAPIView(APIView):
+    """
+    Analytics API gives insights of User's meetings
+    """
+
+    def get(self, request):
+        user = request.user
+
+        ca = CalendarAnalytics(user)
+
+        data = {}
+        dt_3_months = datetime.now(tz=pytz.timezone('Asia/Kolkata')) - relativedelta(months=3)
+        dt_12_months = datetime.now(tz=pytz.timezone('Asia/Kolkata')) - relativedelta(months=12)
+
+        stats_12_months = ca.total_time_spent_by_month(from_time=dt_12_months)
+        data["month"] = {
+            "busy": max(stats_12_months, key=stats_12_months.get),
+            "relax": min(stats_12_months, key=stats_12_months.get),
+            "last_3_months": ca.total_time_spent_by_month(from_time=dt_3_months),
+        }
+
+        stats_52_weeks = ca.total_time_spent_by_month(from_time=dt_12_months)
+        data["week"] = {
+            "busy": max(stats_52_weeks, key=stats_52_weeks.get),
+            "relax": min(stats_52_weeks, key=stats_52_weeks.get),
+            "avg_time": ca.avg_time_spent_by_week(from_time=dt_12_months),
+            "meetings_cnt": ca.avg_meetings_by_week(from_time=dt_12_months),
+        }
+
+        data['top_attendee'] = ca.max_meetings_with()[:3]
+
+        data["time_spent"] = {
+            'recruit': ca.time_spent_on(['Recruitment', 'Interview', 'Resume']),
+            'standup': ca.time_spent_on(['standup', 'Stand up', 'catch up']),
+            'zoom': ca.time_spent_on(['Zoom call']),
+        }
+        return Response(data)
 
 
 class CalendarAnalytics(object):
