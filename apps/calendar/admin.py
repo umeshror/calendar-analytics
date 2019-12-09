@@ -36,3 +36,11 @@ class AccountAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Account, AccountAdmin)
+
+
+class AttendeeAdmin(admin.ModelAdmin):
+    list_display = ['account', 'event', 'rsvp']
+    list_filter = ['account', 'event', 'rsvp']
+
+
+admin.site.register(Attendee, AttendeeAdmin)

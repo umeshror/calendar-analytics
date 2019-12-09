@@ -1,5 +1,7 @@
-import arrow
-from django.apps import apps
+from __future__ import absolute_import
+
+import pytz
+from dateutil import parser
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -9,13 +11,9 @@ from django.views.generic.base import View
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
-from utils import get_new_access_token
-
-UserOauthToken = apps.get_model('authenticate', 'UserOauthToken')
-Calendar = apps.get_model('calendar', 'Calendar')
-Event = apps.get_model('calendar', 'Event')
-Attendee = apps.get_model('calendar', 'Attendee')
-Account = apps.get_model('calendar', 'Account')
+from apps.authenticate.models import UserOauthToken
+from apps.calendar.models import Event, Attendee, Account, Calendar
+from apps.calendar.utils import get_new_access_token
 
 
 class FetchEventView(View):
@@ -94,21 +92,21 @@ def get_or_create_events(calendar, events):
 
                 start = record.get('start')
                 if start.get("dateTime"):
-                    start_time = get_utc_time(record['start']['dateTime'])
+                    start_time = get_utc_time(record['start']['dateTime'], calendar.timezone)
                 else:
-                    start_time = get_utc_time(record['start']['date'], is_date=True)
+                    start_time = get_utc_time(record['start']['date'], calendar.timezone, is_date=True)
 
                 end = record.get('end')
                 if end.get("dateTime"):
-                    end_time = get_utc_time(record['end']["dateTime"])
+                    end_time = get_utc_time(record['end']["dateTime"], calendar.timezone)
                 else:
-                    end_time = get_utc_time(record['end']["date"], is_date=True)
+                    end_time = get_utc_time(record['end']["date"], calendar.timezone, is_date=True)
 
                 event.start_time = start_time
                 event.end_time = end_time
 
-                event.created_at = get_utc_time(record["created"])
-                event.updated_at = get_utc_time(record["updated"])
+                event.created_at = get_utc_time(record["created"], calendar.timezone)
+                event.updated_at = get_utc_time(record["updated"], calendar.timezone)
                 event.save()
                 if record.get('attendees'):
                     create_attendees(event, record['attendees'])
@@ -140,17 +138,18 @@ def create_attendees(event, attendees_dict):
     return accounts
 
 
-def get_utc_time(timezone_aware_ts, is_date=False):
+def get_utc_time(timezone_aware_ts, time_zone, is_date=False):
     """
     Converts datetime str to UTC datetime obj
     :param timezone_aware_ts: String rep of datetime
+    :param time_zone: Calander time_zone
+    :param is_date: is timezone_aware_ts date ?
     :return: utc aware datetime
     """
-
-    arrow_ts = arrow.get(timezone_aware_ts)
-    if not is_date:
-        arrow_ts = arrow_ts.utcnow()
-    return arrow_ts.datetime
+    tz = pytz.timezone(time_zone)
+    if is_date:
+        return tz.localize(parser.parse(timezone_aware_ts))
+    return parser.parse(timezone_aware_ts)
 
 
 def get_organiser(record):
@@ -191,18 +190,11 @@ def get_or_create_calendar(user, calendar_record):
     :return:
     """
     # from apps.calendar.models import Calendar
-    try:
-        calendar = Calendar.objects.get(user=user,
-                                        cal_id=calendar_record["id"]
-                                        )
-    except Calendar.DoesNotExist:
-        calendar, created = Calendar.objects.create(user=user,
+    calendar, _ = Calendar.objects.update_or_create(user=user,
                                                     cal_id=calendar_record["id"],
-                                                    title=calendar_record["summary"],
-                                                    timezone=calendar_record["timeZone"]
-                                                    )
-    else:
-        calendar.title = calendar_record["summary"]
-        calendar.timezone = calendar_record["timeZone"]
-        calendar.save()
+                                                    defaults={
+                                                        'title': calendar_record["summary"],
+                                                        'timezone': calendar_record["timeZone"],
+                                                    })
+
     return calendar

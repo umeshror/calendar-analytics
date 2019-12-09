@@ -1,15 +1,15 @@
+from __future__ import absolute_import
+
 import json
 
 import httplib2
-from django.apps import apps
 from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.generic.base import View
 from oauth2client.client import OAuth2WebServerFlow
 
-UserOauthToken = apps.get_model('authenticate', 'UserOauthToken')
-Calendar = apps.get_model('calendar', 'Calendar')
+from apps.authenticate.models import UserOauthToken
 
 
 class OAuth(View):

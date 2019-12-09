@@ -81,11 +81,11 @@ class Attendee(models.Model):
         help_text='RSVP of the Attendee'
     )
     def __unicode__(self):
-        return self.account
+        return self.account.email
 
     class Meta:
         unique_together = ('account', 'event')
-        auto_created = True
+        # auto_created = True
 
 class Event(models.Model):
     """
@@ -116,7 +116,7 @@ class Event(models.Model):
     )
 
     event_link = models.CharField(
-        max_length=255,
+        max_length=500,
         blank=False,
         help_text="Link of Google Calendar Event"
     )
