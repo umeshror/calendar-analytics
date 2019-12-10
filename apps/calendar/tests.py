@@ -211,11 +211,13 @@ class TestCalendarAnalytics(TestCase):
         _events_df.return_value = pd.DataFrame(self.DATA)
         ca = CalendarAnalytics(self.user)
         actual_output = ca._search_meetings(['Standup']).to_dict()
+
         expected_output = {'end_time': {4: Timestamp('2019-01-11 10:00:00+0530', tz='Asia/Kolkata')},
                            'id': {4: 'sda3cdcasdvasdvasdvas'},
                            'start_time': {4: Timestamp('2019-01-11 10:00:00+0530', tz='Asia/Kolkata')},
                            'time_spent': {4: 3600},
                            'title': {4: 'Standup catchcup'}}
+
         self.assertDictEqual(actual_output, expected_output)
 
     @mock.patch.object(CalendarAnalytics, "_events_df")

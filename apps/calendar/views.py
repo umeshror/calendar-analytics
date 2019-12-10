@@ -18,15 +18,16 @@ from apps.calendar.utils import get_new_access_token
 
 class FetchEventView(View):
     """
-    Redirected when user gives consent to access calendar data and
+    Redirected when user gives consent to access the calendar data and
     system gets AccessToken and RefreshToken
-    With help og these AccessToken and RefreshToken we can do further
-    queries to Google Calendar
 
+    With help of these AccessToken and RefreshToken we can do further
+    queries to Google Calendar
     """
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         user_oauth = UserOauthToken.objects.get(user=request.user)
+
         if user_oauth.is_token_expired():
             user_oauth.access_token = get_new_access_token(user_oauth.refresh_token)
             user_oauth.save()
@@ -43,7 +44,7 @@ class FetchEventView(View):
         calendar_record = service.calendars().get(calendarId='primary').execute()
 
         calendar = get_or_create_calendar(user_oauth.user, calendar_record)
-        # sync_token will make sure we are not fetching same events again anad again
+        # sync_token will make sure we are not fetching same events again and again
         sync_token = calendar.events_sync_token or None
         events = []
         page_token = None
@@ -59,7 +60,7 @@ class FetchEventView(View):
                 calendar.save()
                 break
 
-        events = get_or_create_events(calendar, events)
+        get_or_create_events(calendar, events)
 
         return HttpResponseRedirect(reverse('analytics'))
 
@@ -68,9 +69,9 @@ def get_or_create_events(calendar, events):
     """
     Crates a unique event from Google Event ID
     This event then linked to calendar
-    :param calendar: <calendar> instance
+    :param calendar: <Calendar> instance
     :param events: List of Event dicts from Google API
-    :return:
+    :return:[<Event instance>]
     """
     data = []
     with transaction.atomic():

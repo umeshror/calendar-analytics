@@ -13,9 +13,9 @@ urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^oauth-login/$', csrf_exempt(OAuth.as_view()), name='oauth'),
+    url(r'^oauth-callback/$', OAuth2CallBack.as_view(), name='oauth2_callback'),
     url(r'^fetch-events/$', FetchEventView.as_view(), name='fetch_events'),
     url(r'^analytics/$', AnalyticsAPIView.as_view(), name='analytics'),
-    url(r'^oauth-callback/$', OAuth2CallBack.as_view(), name='oauth2_callback'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

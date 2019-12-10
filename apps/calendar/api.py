@@ -34,7 +34,7 @@ class AnalyticsAPIView(APIView):
             "last_3_months": ca.total_time_spent_by_month(from_time=dt_3_months),
         }
 
-        stats_52_weeks = ca.total_time_spent_by_month(from_time=dt_12_months)
+        stats_52_weeks = ca.total_time_spent_by_week(from_time=dt_12_months)
         data["week"] = {
             "busy": max(stats_52_weeks, key=stats_52_weeks.get),
             "relax": min(stats_52_weeks, key=stats_52_weeks.get),
@@ -48,6 +48,7 @@ class AnalyticsAPIView(APIView):
             'recruit': ca.time_spent_on(['Recruitment', 'Interview', 'Resume']),
             'standup': ca.time_spent_on(['standup', 'Stand up', 'catch up']),
             'zoom': ca.time_spent_on(['Zoom call']),
+            'operation': ca.time_spent_on(['Operation']),
         }
         return Response(data)
 
@@ -201,5 +202,5 @@ class CalendarAnalytics(object):
         if from_time:
             df = df[df['start_time'] > from_time]
         if to_time:
-            df = df[df['start_time'] < to_time]
+            df = df[df['end_time'] < to_time]
         return df
